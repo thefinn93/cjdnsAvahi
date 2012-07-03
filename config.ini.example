@@ -5,5 +5,5 @@ adminPort = 11234
 cjdnsIP = your v6 IP address
 peeringPort = your cjdns peering port
 importPath = /opt/cjdns/contrib/python
-public_key = your cjdns public key
+publicKey = your cjdns public key
 autoaddPeers = true
