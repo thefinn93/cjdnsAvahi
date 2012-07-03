@@ -1,9 +1,0 @@
-[cjdns]
-name = Name your node
-adminPassword = Your admin password
-adminPort = 11234
-cjdnsIP = your v6 IP address
-peeringPort = your cjdns peering port
-importPath = /opt/cjdns/contrib/python
-publicKey = your cjdns public key
-autoaddPeers = true

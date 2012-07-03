@@ -9,7 +9,7 @@ import ConfigParser
 
 parser=ConfigParser.SafeConfigParser()
 parser.read(['config.ini'])
-name = parser.get('cjdns','name')
+name = parser.get('options','name')
 ip = parser.get('cjdns','cjdnsIP')
 adminPassword = parser.get('cjdns','adminPassword')
 adminPort = parser.getint('cjdns','adminPort')

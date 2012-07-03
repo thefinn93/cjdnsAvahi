@@ -12,13 +12,13 @@ TYPE = '_cjdns._udp'
 
 parser=ConfigParser.SafeConfigParser()
 parser.read(['config.ini'])
-name = parser.get('cjdns','name')
+name = parser.get('options','name')
 ip = parser.get('cjdns','cjdnsIP')
 adminPassword = parser.get('cjdns','adminPassword')
 adminPort = parser.getint('cjdns','adminPort')
 import_path = parser.get('cjdns','importPath')
 public_key = parser.get('cjdns','publicKey')
-autoadd = parser.getboolean('cjdns','autoAddPeers')
+autoadd = parser.getboolean('options','autoAddPeers')
 
 def service_resolved(*args):
     record = {"hostname": str(args[5]),"ip": str(args[7]), "port": str(args[8])}

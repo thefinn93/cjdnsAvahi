@@ -5,13 +5,14 @@ Automatically connect with cjdns peers on the LAN, courtesy of avahi/zeroconf.
 
 Requirements:
 ----------
-`python-avahi`
+`python-avahi python-gobject avahi-daemon`
 
-(i think that's all, please let me know if there's anything else)
+These are the names of the debian/ubuntu packages that I had to install to get it working.
+I think that's all, please let me know if there's anything else or a more proper name for any of them
 
 Running
 ----------
-First rename `config.ini.example` to `config.ini`
+First run config.py to generate a config file.
 
 Run `python broadcast.py` to broadcast the service. For the time being it will broadcast until the enter key or ctrl-c is pressed
 
