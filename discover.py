@@ -3,17 +3,21 @@ import sys
 import dbus, gobject, avahi
 from dbus import DBusException
 from dbus.mainloop.glib import DBusGMainLoop
+import ConfigParser
 
 
 TYPE = '_cjdns._udp'
 
 
-## Configuration (eventually I'd like to parse the cjdroute.conf file and just pull this all out of there)
-adminPassword = "super_secure_password" # Admin cjdns password
-adminPort = 11234 # Port that cjdns admin interface is listening on
-port = 10000 # Port cjdns is listening on
-import_path = "/opt/cjdns/contrib/python" # path to the latest cjdns python libraries
-#######
+parser=ConfigParser.SafeConfigParser()
+parser.read(['config.ini'])
+name = parser.get('cjdns','name')
+ip = parser.get('cjdns','cjdnsIP')
+adminPassword = parser.get('cjdns','adminPassword')
+adminPort = parser.getint('cjdns','adminPort')
+import_path = parser.get('cjdns','importPath')
+public_key = parser.get('cjdns','publicKey')
+autoadd = parser.getboolean('cjdns','autoaddPeers')
 
 def service_resolved(*args):
     record = {"hostname": str(args[5]),"ip": str(args[7]), "port": str(args[8])}

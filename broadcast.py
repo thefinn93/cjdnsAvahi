@@ -5,16 +5,16 @@ import json
 import re
 import sys
 import random
+import ConfigParser
 
-## Configuration (eventually I'd like to parse the cjdroute.conf file and just pull this all out of there)
-name = "Hyperboira Peer" # A public name for your node - shown to potential peers
-ip = "fc00:.." # Your cjdns public IP - shown to potential peers
-adminPassword = "super_secure_password" # Admin cjdns password
-adminPort = 11234 # Port that cjdns admin interface is listening on
-port = 10000 # Port cjdns is listening on
-import_path = "/opt/cjdns/contrib/python" # path to the latest cjdns python libraries
-public_key = "stuff.k" # Your public key
-#######
+parser=ConfigParser.SafeConfigParser()
+parser.read(['config.ini'])
+name = parser.get('cjdns','name')
+ip = parser.get('cjdns','cjdnsIP')
+adminPassword = parser.get('cjdns','adminPassword')
+adminPort = parser.getint('cjdns','adminPort')
+import_path = parser.get('cjdns','importPath')
+public_key = parser.get('cjdns','publicKey')
 
 def generatepass():
     letters = "1234567890abcdefghijklmnopqrstuvwxyz"
