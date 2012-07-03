@@ -13,6 +13,7 @@ name = parser.get('cjdns','name')
 ip = parser.get('cjdns','cjdnsIP')
 adminPassword = parser.get('cjdns','adminPassword')
 adminPort = parser.getint('cjdns','adminPort')
+port = parser.getint('cjdns','peeringPort')
 import_path = parser.get('cjdns','importPath')
 public_key = parser.get('cjdns','publicKey')
 
@@ -37,7 +38,7 @@ if addpass["error"] != "none":
     print "Adding password failed!"
     sys.exit()
 
-service = ZeroconfService(name="Hyperboria", port=port,  stype="_cjdns._udp", text=["password=" + password, "key=" + public_key,"name=" + name,"cjdnsip=" + ip])
+service = ZeroconfService(name="Hyperboria Peer " + name, port=port,  stype="_cjdns._udp", text=["password=" + password, "key=" + public_key,"name=" + name,"cjdnsip=" + ip])
 service.publish()
 print "Service published!"
 raw_input("Press enter to stop broadcasting")

@@ -4,6 +4,7 @@ import dbus, gobject, avahi
 from dbus import DBusException
 from dbus.mainloop.glib import DBusGMainLoop
 import ConfigParser
+import PyZenity
 
 
 TYPE = '_cjdns._udp'
@@ -17,7 +18,7 @@ adminPassword = parser.get('cjdns','adminPassword')
 adminPort = parser.getint('cjdns','adminPort')
 import_path = parser.get('cjdns','importPath')
 public_key = parser.get('cjdns','publicKey')
-autoadd = parser.getboolean('cjdns','autoaddPeers')
+autoadd = parser.getboolean('cjdns','autoAddPeers')
 
 def service_resolved(*args):
     record = {"hostname": str(args[5]),"ip": str(args[7]), "port": str(args[8])}
@@ -29,12 +30,23 @@ def service_resolved(*args):
         record[key] = value
     print "Discovered peer " + record['hostname'] + " (" + record['ip'] + ") on port " + record['port']
 
-    if autoadd:
-        print "Adding as a peer..."
-        sys.path.append(import_path)
-        from cjdns import cjdns_connect
-        cjdns = cjdns_connect("127.0.0.1", adminPort, adminPassword)
-        cjdns.UDPInterface_beginConnection(record["key"],record["ip"] + ":" + record["port"],0,record["password"])
+    if public_key != record["key"]:     # Make sure we're not adding ourself
+        if autoadd:
+            addPeer(record)
+        elif PyZenity.Question("Would you like to add " + record["name"] + " (" + record["ip"] + ":" + record["port"] +") as a peer on CJDNS?"):
+            addPeer(record)
+        else:
+            print "Not adding peer"
+    else:
+        print "Discovered ourself. Ignoring..."
+
+
+def addPeer(record):
+    print "Adding peer..."
+    sys.path.append(import_path)
+    from cjdns import cjdns_connect
+    cjdns = cjdns_connect("127.0.0.1", adminPort, adminPassword)
+    cjdns.UDPInterface_beginConnection(record["key"],record["ip"] + ":" + record["port"],0,record["password"])
 
 def print_error(*args):
     print 'error_handler'
