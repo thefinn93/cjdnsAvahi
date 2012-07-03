@@ -16,7 +16,7 @@ First run config.py to generate a config file.
 
 Run `python broadcast.py` to broadcast the service. For the time being it will broadcast until the enter key or ctrl-c is pressed
 
-Run `python discover.py` to discover peers on the LAN. Note that it will automatically add any peers found on the LAN at this point in time
+Run `python discover.py` to discover peers on the LAN.
 
 Please note that this is still in development and probably wont work. You're on your own.
 
