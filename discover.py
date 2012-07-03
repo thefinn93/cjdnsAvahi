@@ -27,11 +27,14 @@ def service_resolved(*args):
             current_record += str(b)
         key,value = current_record.split("=")
         record[key] = value
-    print "Discovered peer " + record['hostname'] + " (" + record['ip'] + ") on port " + record['port'] + ". Connecting..."
-    sys.path.append(import_path)
-    from cjdns import cjdns_connect
-    cjdns = cjdns_connect("127.0.0.1", adminPort, adminPassword)
-    cjdns.UDPInterface_beginConnection(record["key"],record["ip"] + ":" + record["port"],0,record["password"])
+    print "Discovered peer " + record['hostname'] + " (" + record['ip'] + ") on port " + record['port']
+
+    if autoadd:
+        print "Adding as a peer..."
+        sys.path.append(import_path)
+        from cjdns import cjdns_connect
+        cjdns = cjdns_connect("127.0.0.1", adminPort, adminPassword)
+        cjdns.UDPInterface_beginConnection(record["key"],record["ip"] + ":" + record["port"],0,record["password"])
 
 def print_error(*args):
     print 'error_handler'
