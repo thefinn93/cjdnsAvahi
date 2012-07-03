@@ -1,20 +1,33 @@
+#! /usr/bin/env python
+import sys
 import dbus, gobject, avahi
 from dbus import DBusException
 from dbus.mainloop.glib import DBusGMainLoop
 
-# Looks for iTunes shares
 
 TYPE = '_cjdns._udp'
 
+
+## Configuration (eventually I'd like to parse the cjdroute.conf file and just pull this all out of there)
+adminPassword = "super_secure_password" # Admin cjdns password
+adminPort = 11234 # Port that cjdns admin interface is listening on
+port = 10000 # Port cjdns is listening on
+import_path = "/opt/cjdns/contrib/python" # path to the latest cjdns python libraries
+#######
+
 def service_resolved(*args):
-    record = {"hostname": str(args[5]),"ip": str(args[7]), "port": int(args[8])}
+    record = {"hostname": str(args[5]),"ip": str(args[7]), "port": str(args[8])}
     for a in args[9]:
         current_record = ""
         for b in a:
             current_record += str(b)
         key,value = current_record.split("=")
         record[key] = value
-    print record
+    print "Discovered peer " + record['hostname'] + " (" + record['ip'] + ") on port " + record['port'] + ". Connecting..."
+    sys.path.append(import_path)
+    from cjdns import cjdns_connect
+    cjdns = cjdns_connect("127.0.0.1", adminPort, adminPassword)
+    cjdns.UDPInterface_beginConnection(record["key"],record["ip"] + ":" + record["port"],0,record["password"])
 
 def print_error(*args):
     print 'error_handler'

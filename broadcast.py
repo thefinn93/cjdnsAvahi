@@ -7,13 +7,13 @@ import sys
 import random
 
 ## Configuration (eventually I'd like to parse the cjdroute.conf file and just pull this all out of there)
-name = None 					# A public name for your node - shown to potential peers
-ip = None                   	# Your cjdns public IP - shown to potential peers
-adminPassword = None	        # Admin cjdns password
-adminPort = 11234				# Port that cjdns admin interface is listening on
-port = 10000					# Port cjdns is listening on
-import_path = "/opt/cjdns/contrib/python"	# path to the latest cjdns python libraries
-public_key = None           	# Your public key
+name = "Hyperboira Peer" # A public name for your node - shown to potential peers
+ip = "fc00:.." # Your cjdns public IP - shown to potential peers
+adminPassword = "super_secure_password" # Admin cjdns password
+adminPort = 11234 # Port that cjdns admin interface is listening on
+port = 10000 # Port cjdns is listening on
+import_path = "/opt/cjdns/contrib/python" # path to the latest cjdns python libraries
+public_key = "stuff.k" # Your public key
 #######
 
 def generatepass():
