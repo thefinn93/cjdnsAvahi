@@ -3,22 +3,69 @@ import sys
 import dbus, gobject, avahi
 from dbus import DBusException
 from dbus.mainloop.glib import DBusGMainLoop
-import ConfigParser
 import PyZenity
-
+import os
+import json
 
 TYPE = '_cjdns._udp'
 
+try:
+    config = json.load(open(os.getenv("HOME") + '/.cjdnsadmin'))
+except TypeError:
+    print "Failed to load " + os.getenv("HOME") + "/.cjdnsadmin"
+    print "Are it teh valid JSONz?"
+    sys.exit(1)
+except IOError:
+    print "Failed to load " + os.getenv("HOME") + "/.cjdnsadmin"
+    print "Maybe it doesn't exist?"
+    sys.exit(1)
+    
+validconfig = True
 
-parser=ConfigParser.SafeConfigParser()
-parser.read(['config.ini'])
-name = parser.get('options','name')
-ip = parser.get('cjdns','cjdnsIP')
-adminPassword = parser.get('cjdns','adminPassword')
-adminPort = parser.getint('cjdns','adminPort')
-import_path = parser.get('cjdns','importPath')
-public_key = parser.get('cjdns','publicKey')
-autoadd = parser.getboolean('options','autoAddPeers')
+try:
+    name = config['name']
+except KeyError:
+    print "Name not defined in the config. Please name your node"
+    validconfig = False
+    
+try:
+    ip = config['ip']
+except KeyError:
+    print "IP not defined in the config. Please tell us your CJDNS IP"
+    validconfig = False
+    
+try:
+    adminPassword = config['password']
+except KeyError:
+    print "Admin password not defined in the config. What kinda ass backwards operation are you running?"
+    validconfig = False
+
+try:
+    adminPort = config['port']
+except KeyError:
+    print "Admin connection port not defined in the config. Try 11234"
+    validconfig = False
+
+try:
+    importpath = config['importPath']
+    sys.path.append(importpath)
+except KeyError:
+    print "Import path not defined in the config. Assuming the cjdns python library is in the default path"
+    
+try:
+    public_key = config['publicKey']
+except KeyError:
+    print "publicKey not defined in config"
+    validconfig = False
+
+try:
+    autoadd = config['autoadd']
+except KeyError:
+    print "autoadd not defined, setting it to false"
+    autoadd = False
+    
+if not validconfig:
+    sys.exit(1)
 
 def service_resolved(*args):
     record = {"hostname": str(args[5]),"ip": str(args[7]), "port": str(args[8])}
