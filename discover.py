@@ -4,68 +4,18 @@ import dbus, gobject, avahi
 from dbus import DBusException
 from dbus.mainloop.glib import DBusGMainLoop
 import PyZenity
-import os
-import json
+import ConfigParser
 
 TYPE = '_cjdns._udp'
-
-try:
-    config = json.load(open(os.getenv("HOME") + '/.cjdnsadmin'))
-except TypeError:
-    print "Failed to load " + os.getenv("HOME") + "/.cjdnsadmin"
-    print "Are it teh valid JSONz?"
-    sys.exit(1)
-except IOError:
-    print "Failed to load " + os.getenv("HOME") + "/.cjdnsadmin"
-    print "Maybe it doesn't exist?"
-    sys.exit(1)
-    
-validconfig = True
-
-try:
-    name = config['name']
-except KeyError:
-    print "Name not defined in the config. Please name your node"
-    validconfig = False
-    
-try:
-    ip = config['ip']
-except KeyError:
-    print "IP not defined in the config. Please tell us your CJDNS IP"
-    validconfig = False
-    
-try:
-    adminPassword = config['password']
-except KeyError:
-    print "Admin password not defined in the config. What kinda ass backwards operation are you running?"
-    validconfig = False
-
-try:
-    adminPort = config['port']
-except KeyError:
-    print "Admin connection port not defined in the config. Try 11234"
-    validconfig = False
-
-try:
-    importpath = config['importPath']
-    sys.path.append(importpath)
-except KeyError:
-    print "Import path not defined in the config. Assuming the cjdns python library is in the default path"
-    
-try:
-    public_key = config['publicKey']
-except KeyError:
-    print "publicKey not defined in config"
-    validconfig = False
-
-try:
-    autoadd = config['autoadd']
-except KeyError:
-    print "autoadd not defined, setting it to false"
-    autoadd = False
-    
-if not validconfig:
-    sys.exit(1)
+parser=ConfigParser.SafeConfigParser()
+parser.read(['config.ini'])
+name = parser.get('options','name')
+ip = parser.get('cjdns','cjdnsIP')
+adminPassword = parser.get('cjdns','adminPassword')
+adminPort = parser.getint('cjdns','adminPort')
+import_path = parser.get('cjdns','importPath')
+public_key = parser.get('cjdns','publicKey')
+autoadd = parser.getboolean('options','autoAddPeers')
 
 def service_resolved(*args):
     record = {"hostname": str(args[5]),"ip": str(args[7]), "port": str(args[8])}
@@ -75,7 +25,10 @@ def service_resolved(*args):
             current_record += str(b)
         key,value = current_record.split("=")
         record[key] = value
-    print "Discovered peer " + record['hostname'] + " (" + record['ip'] + ") on port " + record['port']
+    if record["interface"] == "ETHInterface":
+        print "Discovered peer " + record["hostname"] + " (" + record["mac"] + ")"
+    else:
+        print "Discovered peer " + record['hostname'] + " (" + record['ip'] + ") on port " + record['port']
 
     if public_key != record["key"]:     # Make sure we're not adding ourself
         if autoadd:
@@ -90,10 +43,12 @@ def service_resolved(*args):
 
 def addPeer(record):
     print "Adding peer..."
-    sys.path.append(import_path)
     from cjdns import cjdns_connect
     cjdns = cjdns_connect("127.0.0.1", adminPort, adminPassword)
-    cjdns.UDPInterface_beginConnection(record["key"],record["ip"] + ":" + record["port"],0,record["password"])
+    if(record["interface"] == "ETHInterface"):
+        cjdns.ETHInterface_beginConnection(record["key"], record["mac"], 0, record["password"])
+    else:
+        cjdns.UDPInterface_beginConnection(record["key"],record["ip"] + ":" + record["port"],0,record["password"])
 
 def print_error(*args):
     print 'error_handler'
