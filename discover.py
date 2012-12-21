@@ -16,6 +16,7 @@ adminPort = parser.getint('cjdns','adminPort')
 import_path = parser.get('cjdns','importPath')
 public_key = parser.get('cjdns','publicKey')
 autoadd = parser.getboolean('options','autoAddPeers')
+sys.path.append(import_path)
 
 def service_resolved(*args):
     record = {"hostname": str(args[5]),"ip": str(args[7]), "port": str(args[8])}
