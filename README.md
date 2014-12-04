@@ -1,3 +1,5 @@
+*Note: This is silly and useless now thanks to the `ETHInterface` that was introduced into cjdns some time ago*
+
 cjdnsAvahi
 ==========
 
